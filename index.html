@@ -6,113 +6,311 @@
 <title>Gil Industries Digital Management Intelligence</title>
 
 <style>
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
 
-html,
-body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: #081c2b;
-}
+    html,
+    body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #081c2b;
+    }
 
-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+    body {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
 
-.app-frame {
-    position: relative;
-    width: 100vw;
-    aspect-ratio: 1745 / 800;
-    max-height: 100vh;
-    max-width: calc(100vh * 1745 / 800);
-    overflow: hidden;
-}
+    .app-frame {
+        position: relative;
+        width: 100vw;
+        aspect-ratio: 1745 / 800;
+        max-height: 100vh;
+        max-width: calc(100vh * 1745 / 800);
+        overflow: hidden;
+        flex-shrink: 0;
+    }
 
-.fondo-svg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    pointer-events: none;
-    z-index: 0;
-}
+    .fondo-svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+        pointer-events: none;
+        user-select: none;
+        z-index: 0;
+    }
 
-.grafana-link {
-    position: absolute;
-    top: 80%;
-    left: 73%;
-    width: min(12vw, 180px);
-    transform: translate(-50%, -50%);
-    z-index: 9;
-    transition: 0.22s;
-}
+    .grafana-link {
+        position: absolute;
+        top: 80%;
+        left: 73%;
+        width: min(12vw, 180px);
+        transform: translate(-50%, -50%) scale(1);
+        transform-origin: center center;
+        z-index: 9;
+        display: block;
+        pointer-events: auto;
+        transition: transform 0.22s ease, filter 0.22s ease, opacity 0.22s ease;
+        opacity: 0.96;
+    }
 
-.grafana-link:hover {
-    transform: translate(-50%, -50%) scale(1.08);
-    filter: drop-shadow(0 0 10px rgba(0,240,255,.28))
-            drop-shadow(0 0 22px rgba(0,240,255,.18));
-}
+    .grafana-link:hover {
+        transform: translate(-50%, -50%) scale(1.08);
+        filter:
+            drop-shadow(0 0 10px rgba(0, 240, 255, 0.28))
+            drop-shadow(0 0 22px rgba(0, 240, 255, 0.18));
+        opacity: 1;
+    }
 
-.powerbi-link {
-    position: absolute;
-    top: 50%;
-    left: 82%;
-    width: min(22vw, 320px);
-    transform: translate(-50%, -50%);
-    z-index: 9;
-    transition: 0.22s;
-}
+    .grafana-link img {
+        width: 100%;
+        height: auto;
+        display: block;
+        user-select: none;
+        pointer-events: none;
+    }
 
-.powerbi-link:hover {
-    transform: translate(-50%, -50%) scale(1.08);
-    filter: drop-shadow(0 0 10px rgba(0,240,255,.28))
-            drop-shadow(0 0 22px rgba(0,240,255,.18));
-}
+    .powerbi-link {
+        position: absolute;
+        top: 50%;
+        left: 82%;
+        width: min(22vw, 320px);
+        transform: translate(-50%, -50%) scale(1);
+        transform-origin: center center;
+        z-index: 9;
+        display: block;
+        pointer-events: auto;
+        transition: transform 0.22s ease, filter 0.22s ease, opacity 0.22s ease;
+        opacity: 0.96;
+    }
 
-.cursor-beam-layer {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 8;
-}
+    .powerbi-link:hover {
+        transform: translate(-50%, -50%) scale(1.08);
+        filter:
+            drop-shadow(0 0 10px rgba(0, 240, 255, 0.28))
+            drop-shadow(0 0 22px rgba(0, 240, 255, 0.18));
+        opacity: 1;
+    }
 
-.cursor-beam-coreline {
-    stroke: url(#cursorBeamGradientCore);
-    stroke-width: 4.5;
-    stroke-linecap: round;
-    filter: url(#cursorBeamGlowStrong);
-    opacity: 0;
-}
+    .powerbi-link img {
+        width: 100%;
+        height: auto;
+        display: block;
+        user-select: none;
+        pointer-events: none;
+    }
 
-.cursor-beam-hit {
-    fill: rgba(170,250,255,.95);
-    filter: url(#cursorBeamGlowStrong);
-    opacity: 0;
-}
+    .cursor-beam-layer {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 6;
+        pointer-events: none;
+        overflow: visible;
+    }
 
-.cursor-beam-ring {
-    fill: none;
-    stroke: rgba(0,240,255,.65);
-    stroke-width: 1.4;
-    filter: url(#cursorBeamGlow);
-    opacity: 0;
-}
+    .cursor-beam-coreline {
+        stroke: url(#cursorBeamGradientCore);
+        stroke-width: 4.2;
+        stroke-linecap: round;
+        filter: url(#cursorBeamGlowStrong);
+        opacity: 0;
+        transition: opacity 0.12s ease;
+        animation: beamPulseCore 1.1s ease-in-out infinite;
+    }
 
-.beam-active .cursor-beam-coreline,
-.beam-active .cursor-beam-hit,
-.beam-active .cursor-beam-ring {
-    opacity: 1;
-}
+    .cursor-beam-hit {
+        fill: rgba(170, 250, 255, 0.95);
+        filter: url(#cursorBeamGlowStrong);
+        opacity: 0;
+        transition: opacity 0.12s ease;
+        animation: beamBlink 1.2s ease-in-out infinite;
+    }
+
+    .cursor-beam-ring {
+        fill: none;
+        stroke: rgba(0, 240, 255, 0.65);
+        stroke-width: 1.4;
+        filter: url(#cursorBeamGlow);
+        opacity: 0;
+        transition: opacity 0.12s ease;
+        animation: beamBlink 1.2s ease-in-out infinite;
+    }
+
+    .beam-active .cursor-beam-coreline,
+    .beam-active .cursor-beam-hit,
+    .beam-active .cursor-beam-ring {
+        opacity: 1;
+    }
+
+    @keyframes beamPulseCore {
+        0%, 100% { stroke-width: 4.2; opacity: 0.82; }
+        50% { stroke-width: 5.6; opacity: 1; }
+    }
+
+    @keyframes beamBlink {
+        0%, 100% { opacity: 0.72; }
+        50% { opacity: 1; }
+    }
+
+    .data-trails {
+        position: absolute;
+        inset: 0;
+        z-index: 7;
+        pointer-events: none;
+        overflow: hidden;
+    }
+
+    .data-trail {
+        position: absolute;
+        border-radius: 999px;
+        opacity: 0;
+        will-change: transform, opacity;
+        transform-origin: center center;
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+        animation-duration: 1.11s;
+    }
+
+    .data-trail.horizontal {
+        width: 220px;
+        height: 2px;
+        background: linear-gradient(
+            90deg,
+            rgba(0, 240, 255, 0) 0%,
+            rgba(0, 240, 255, 0.20) 18%,
+            rgba(120, 250, 255, 0.98) 55%,
+            rgba(255, 255, 255, 0.98) 72%,
+            rgba(0, 240, 255, 0) 100%
+        );
+        box-shadow:
+            0 0 6px rgba(0, 240, 255, 0.45),
+            0 0 14px rgba(0, 240, 255, 0.28),
+            0 0 22px rgba(255, 255, 255, 0.10);
+    }
+
+    .data-trail.vertical {
+        width: 2px;
+        height: 220px;
+        background: linear-gradient(
+            180deg,
+            rgba(0, 240, 255, 0) 0%,
+            rgba(0, 240, 255, 0.20) 18%,
+            rgba(120, 250, 255, 0.98) 55%,
+            rgba(255, 255, 255, 0.98) 72%,
+            rgba(0, 240, 255, 0) 100%
+        );
+        box-shadow:
+            0 0 6px rgba(0, 240, 255, 0.45),
+            0 0 14px rgba(0, 240, 255, 0.28),
+            0 0 22px rgba(255, 255, 255, 0.10);
+    }
+
+    .data-trail.horizontal::after {
+        content: "";
+        position: absolute;
+        right: 18px;
+        top: 50%;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.95);
+        box-shadow:
+            0 0 8px rgba(255, 255, 255, 0.95),
+            0 0 16px rgba(0, 240, 255, 0.65);
+    }
+
+    .data-trail.vertical::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: 18px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        transform: translateX(-50%);
+        background: rgba(255, 255, 255, 0.95);
+        box-shadow:
+            0 0 8px rgba(255, 255, 255, 0.95),
+            0 0 16px rgba(0, 240, 255, 0.65);
+    }
+
+    .anim-out-right { animation-name: outRight; }
+    .anim-out-left { animation-name: outLeft; }
+    .anim-out-up { animation-name: outUp; }
+    .anim-out-down { animation-name: outDown; }
+    .anim-in-left { animation-name: inLeft; }
+    .anim-in-right { animation-name: inRight; }
+    .anim-in-up { animation-name: inUp; }
+    .anim-in-down { animation-name: inDown; }
+
+    @keyframes outRight {
+        0% { opacity: 0; transform: translateX(0) scaleX(0.55); }
+        10% { opacity: 0.95; }
+        70% { opacity: 0.82; }
+        100% { opacity: 0; transform: translateX(42vw) scaleX(1.10); }
+    }
+
+    @keyframes outLeft {
+        0% { opacity: 0; transform: translateX(0) scaleX(0.55) rotate(180deg); }
+        10% { opacity: 0.95; }
+        70% { opacity: 0.82; }
+        100% { opacity: 0; transform: translateX(-42vw) scaleX(1.10) rotate(180deg); }
+    }
+
+    @keyframes outUp {
+        0% { opacity: 0; transform: translateY(0) scaleY(0.55) rotate(180deg); }
+        10% { opacity: 0.95; }
+        70% { opacity: 0.82; }
+        100% { opacity: 0; transform: translateY(-34vh) scaleY(1.10) rotate(180deg); }
+    }
+
+    @keyframes outDown {
+        0% { opacity: 0; transform: translateY(0) scaleY(0.55); }
+        10% { opacity: 0.95; }
+        70% { opacity: 0.82; }
+        100% { opacity: 0; transform: translateY(34vh) scaleY(1.10); }
+    }
+
+    @keyframes inLeft {
+        0% { opacity: 0; transform: translateX(-42vw) scaleX(1.10); }
+        25% { opacity: 0.82; }
+        70% { opacity: 0.95; }
+        100% { opacity: 0; transform: translateX(0) scaleX(0.55); }
+    }
+
+    @keyframes inRight {
+        0% { opacity: 0; transform: translateX(42vw) scaleX(1.10) rotate(180deg); }
+        25% { opacity: 0.82; }
+        70% { opacity: 0.95; }
+        100% { opacity: 0; transform: translateX(0) scaleX(0.55) rotate(180deg); }
+    }
+
+    @keyframes inUp {
+        0% { opacity: 0; transform: translateY(-34vh) scaleY(1.10); }
+        25% { opacity: 0.82; }
+        70% { opacity: 0.95; }
+        100% { opacity: 0; transform: translateY(0) scaleY(0.55); }
+    }
+
+    @keyframes inDown {
+        0% { opacity: 0; transform: translateY(34vh) scaleY(1.10) rotate(180deg); }
+        25% { opacity: 0.82; }
+        70% { opacity: 0.95; }
+        100% { opacity: 0; transform: translateY(0) scaleY(0.55) rotate(180deg); }
+    }
 </style>
 </head>
 
@@ -120,56 +318,90 @@ body {
 
 <div class="app-frame" id="appFrame">
 
-    <img src="assets/img/HomePageBackground.svg" class="fondo-svg">
+    <img
+        src="assets/img/HomePageBackground.svg"
+        alt="Fondo"
+        class="fondo-svg"
+    >
 
-    <a class="grafana-link" href="pages/grafana/">
-        <img src="assets/img/GIDMIGrafana.svg">
+    <a class="grafana-link" href="pages/grafana/" target="_self" aria-label="Ir a Grafana">
+        <img src="assets/img/GIDMIGrafana.svg" alt="Grafana">
     </a>
 
-    <a class="powerbi-link" href="http://10.88.90.86/pages/powerbi/">
-        <img src="assets/img/GIDMIPowerBI.svg">
+    <a class="powerbi-link" href="http://10.88.90.86/pages/powerbi/" target="_self" aria-label="Ir a Power BI">
+        <img src="assets/img/GIDMIPowerBI.svg" alt="Power BI">
     </a>
 
-    <svg class="cursor-beam-layer" id="cursorBeamLayer">
-
+    <svg class="cursor-beam-layer" id="cursorBeamLayer" aria-hidden="true">
         <defs>
-            <filter id="cursorBeamGlow">
-                <feGaussianBlur stdDeviation="4"/>
+            <filter id="cursorBeamGlow" x="-60%" y="-60%" width="220%" height="220%">
+                <feGaussianBlur stdDeviation="4.5" result="blur"></feGaussianBlur>
                 <feMerge>
-                    <feMergeNode/>
-                    <feMergeNode in="SourceGraphic"/>
+                    <feMergeNode in="blur"></feMergeNode>
+                    <feMergeNode in="SourceGraphic"></feMergeNode>
                 </feMerge>
             </filter>
 
-            <filter id="cursorBeamGlowStrong">
-                <feGaussianBlur stdDeviation="7"/>
+            <filter id="cursorBeamGlowStrong" x="-80%" y="-80%" width="260%" height="260%">
+                <feGaussianBlur stdDeviation="7" result="blur"></feGaussianBlur>
                 <feMerge>
-                    <feMergeNode/>
-                    <feMergeNode in="SourceGraphic"/>
+                    <feMergeNode in="blur"></feMergeNode>
+                    <feMergeNode in="SourceGraphic"></feMergeNode>
                 </feMerge>
             </filter>
 
-            <linearGradient id="cursorBeamGradientCore">
-                <stop offset="0%" stop-color="#ffffff"/>
-                <stop offset="50%" stop-color="#00f0ff"/>
-                <stop offset="100%" stop-color="transparent"/>
+            <linearGradient id="cursorBeamGradientCore" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="rgba(255,255,255,0.98)"></stop>
+                <stop offset="18%" stop-color="rgba(195,255,255,0.98)"></stop>
+                <stop offset="55%" stop-color="rgba(0,240,255,0.95)"></stop>
+                <stop offset="100%" stop-color="rgba(0,240,255,0.10)"></stop>
             </linearGradient>
         </defs>
 
-        <line id="cursorBeamCoreLine" class="cursor-beam-coreline"/>
+        <line id="cursorBeamCoreLine" class="cursor-beam-coreline" x1="0" y1="0" x2="0" y2="0"></line>
 
-        <circle id="cursorBeamHit" class="cursor-beam-hit" r="4.5"/>
-        <circle id="cursorBeamRing" class="cursor-beam-ring" r="10"/>
-
+        <circle id="cursorBeamHit" class="cursor-beam-hit" cx="0" cy="0" r="4.5"></circle>
+        <circle id="cursorBeamRing" class="cursor-beam-ring" cx="0" cy="0" r="10"></circle>
     </svg>
+
+    <div class="data-trails" aria-hidden="true" id="dataTrails">
+        <div class="data-trail horizontal anim-out-right" id="trail1"></div>
+        <div class="data-trail horizontal anim-in-left" id="trail2"></div>
+        <div class="data-trail horizontal anim-out-right" id="trail3"></div>
+        <div class="data-trail horizontal anim-in-left" id="trail4"></div>
+        <div class="data-trail horizontal anim-out-right" id="trail5"></div>
+
+        <div class="data-trail horizontal anim-out-left" id="trail6"></div>
+        <div class="data-trail horizontal anim-in-right" id="trail7"></div>
+        <div class="data-trail horizontal anim-out-left" id="trail8"></div>
+        <div class="data-trail horizontal anim-in-right" id="trail9"></div>
+        <div class="data-trail horizontal anim-out-left" id="trail10"></div>
+
+        <div class="data-trail vertical anim-out-up" id="trail11"></div>
+        <div class="data-trail vertical anim-in-down" id="trail12"></div>
+        <div class="data-trail vertical anim-out-up" id="trail13"></div>
+        <div class="data-trail vertical anim-in-down" id="trail14"></div>
+        <div class="data-trail vertical anim-out-up" id="trail15"></div>
+
+        <div class="data-trail vertical anim-out-down" id="trail16"></div>
+        <div class="data-trail vertical anim-in-up" id="trail17"></div>
+        <div class="data-trail vertical anim-out-down" id="trail18"></div>
+        <div class="data-trail vertical anim-in-up" id="trail19"></div>
+        <div class="data-trail vertical anim-out-down" id="trail20"></div>
+    </div>
 
 </div>
 
 <script>
 (function () {
+    const DURATIONS = ["1.11s", "3.33s"];
 
-    function getCenter() {
+    function getCenterMetrics() {
         const frame = document.getElementById("appFrame");
+
+        if (!frame) {
+            return { cx: 0, cy: 0 };
+        }
 
         return {
             cx: frame.clientWidth / 2,
@@ -177,13 +409,77 @@ body {
         };
     }
 
-    function setupBeam() {
+    function placeTrails() {
+        const { cx, cy } = getCenterMetrics();
 
+        const eastWestOffsets = [-48, -24, 0, 24, 48];
+        const northSouthOffsets = [-48, -24, 0, 24, 48];
+
+        const horizontalBaseX = cx - 110;
+        const verticalBaseY = cy - 110;
+
+        eastWestOffsets.forEach((offset, i) => {
+            const east = document.getElementById(`trail${i + 1}`);
+
+            if (east) {
+                east.style.left = `${horizontalBaseX}px`;
+                east.style.top = `${cy + offset - 1}px`;
+            }
+        });
+
+        eastWestOffsets.forEach((offset, i) => {
+            const west = document.getElementById(`trail${i + 6}`);
+
+            if (west) {
+                west.style.left = `${horizontalBaseX}px`;
+                west.style.top = `${cy + offset - 1}px`;
+            }
+        });
+
+        northSouthOffsets.forEach((offset, i) => {
+            const north = document.getElementById(`trail${i + 11}`);
+
+            if (north) {
+                north.style.left = `${cx + offset - 1}px`;
+                north.style.top = `${verticalBaseY}px`;
+            }
+        });
+
+        northSouthOffsets.forEach((offset, i) => {
+            const south = document.getElementById(`trail${i + 16}`);
+
+            if (south) {
+                south.style.left = `${cx + offset - 1}px`;
+                south.style.top = `${verticalBaseY}px`;
+            }
+        });
+    }
+
+    function randomDuration() {
+        return DURATIONS[Math.floor(Math.random() * DURATIONS.length)];
+    }
+
+    function applyRandomDurations() {
+        document.querySelectorAll(".data-trail").forEach((el, index) => {
+            el.style.animationDuration = randomDuration();
+            el.style.animationDelay = `${(index * 0.11).toFixed(2)}s`;
+
+            el.addEventListener("animationiteration", () => {
+                el.style.animationDuration = randomDuration();
+            });
+        });
+    }
+
+    function setupCursorBeam() {
         const frame = document.getElementById("appFrame");
         const beamLayer = document.getElementById("cursorBeamLayer");
-        const line = document.getElementById("cursorBeamCoreLine");
-        const hit = document.getElementById("cursorBeamHit");
-        const ring = document.getElementById("cursorBeamRing");
+        const beamCoreLine = document.getElementById("cursorBeamCoreLine");
+        const beamHit = document.getElementById("cursorBeamHit");
+        const beamRing = document.getElementById("cursorBeamRing");
+
+        if (!frame || !beamLayer || !beamCoreLine || !beamHit || !beamRing) {
+            return;
+        }
 
         function hideBeam() {
             beamLayer.classList.remove("beam-active");
@@ -193,36 +489,53 @@ body {
             beamLayer.classList.add("beam-active");
         }
 
-        function updateBeam(e) {
+        function updateBeam(clientX, clientY) {
+            const frameRect = frame.getBoundingClientRect();
+            const { cx, cy } = getCenterMetrics();
 
-            const rect = frame.getBoundingClientRect();
-            const { cx, cy } = getCenter();
+            const x = clientX - frameRect.left;
+            const y = clientY - frameRect.top;
 
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+            beamCoreLine.setAttribute("x1", cx);
+            beamCoreLine.setAttribute("y1", cy);
+            beamCoreLine.setAttribute("x2", x);
+            beamCoreLine.setAttribute("y2", y);
 
-            line.setAttribute("x1", cx);
-            line.setAttribute("y1", cy);
-            line.setAttribute("x2", x);
-            line.setAttribute("y2", y);
+            beamHit.setAttribute("cx", x);
+            beamHit.setAttribute("cy", y);
 
-            hit.setAttribute("cx", x);
-            hit.setAttribute("cy", y);
-
-            ring.setAttribute("cx", x);
-            ring.setAttribute("cy", y);
+            beamRing.setAttribute("cx", x);
+            beamRing.setAttribute("cy", y);
 
             showBeam();
         }
 
-        frame.addEventListener("mousemove", updateBeam);
-        frame.addEventListener("mouseenter", updateBeam);
+        frame.addEventListener("mousemove", (event) => {
+            updateBeam(event.clientX, event.clientY);
+        });
+
+        frame.addEventListener("mouseenter", (event) => {
+            updateBeam(event.clientX, event.clientY);
+        });
+
         frame.addEventListener("mouseleave", hideBeam);
         window.addEventListener("blur", hideBeam);
     }
 
-    setupBeam();
+    function rebuildAll() {
+        placeTrails();
+    }
 
+    window.addEventListener("resize", rebuildAll);
+    window.addEventListener("load", rebuildAll);
+
+    requestAnimationFrame(rebuildAll);
+
+    setTimeout(rebuildAll, 50);
+    setTimeout(rebuildAll, 200);
+
+    applyRandomDurations();
+    setupCursorBeam();
 })();
 </script>
 
