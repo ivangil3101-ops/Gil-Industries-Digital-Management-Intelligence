@@ -255,17 +255,53 @@
 
 <div class="app-frame" id="appFrame">
 
-    <img src="assets/img/HomePageBackground.svg" class="fondo-svg">
+    <img
+        src="assets/img/HomePageBackground.svg"
+        alt="Fondo"
+        class="fondo-svg"
+    >
 
-    <a class="grafana-link" href="pages/grafana/" target="_self">
-        <img src="assets/img/GIDMIGrafana.svg">
+    <a class="grafana-link" href="pages/grafana/" target="_self" aria-label="Ir a Grafana">
+        <img src="assets/img/GIDMIGrafana.svg" alt="Grafana">
     </a>
 
-    <a class="powerbi-link" href="http://10.88.90.86/pages/powerbi/" target="_self">
-        <img src="assets/img/GIDMIPowerBI.svg">
+    <a class="powerbi-link" href="http://10.88.90.86/pages/powerbi/" target="_self" aria-label="Ir a Power BI">
+        <img src="assets/img/GIDMIPowerBI.svg" alt="Power BI">
     </a>
 
-    <div class="data-trails">
+    <svg class="cursor-beam-layer" id="cursorBeamLayer" aria-hidden="true">
+        <defs>
+            <filter id="cursorBeamGlow" x="-60%" y="-60%" width="220%" height="220%">
+                <feGaussianBlur stdDeviation="4.5" result="blur"></feGaussianBlur>
+                <feMerge>
+                    <feMergeNode in="blur"></feMergeNode>
+                    <feMergeNode in="SourceGraphic"></feMergeNode>
+                </feMerge>
+            </filter>
+
+            <filter id="cursorBeamGlowStrong" x="-80%" y="-80%" width="260%" height="260%">
+                <feGaussianBlur stdDeviation="7" result="blur"></feGaussianBlur>
+                <feMerge>
+                    <feMergeNode in="blur"></feMergeNode>
+                    <feMergeNode in="SourceGraphic"></feMergeNode>
+                </feMerge>
+            </filter>
+
+            <linearGradient id="cursorBeamGradientCore" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="rgba(255,255,255,0.98)"></stop>
+                <stop offset="18%" stop-color="rgba(195,255,255,0.98)"></stop>
+                <stop offset="55%" stop-color="rgba(0,240,255,0.95)"></stop>
+                <stop offset="100%" stop-color="rgba(0,240,255,0.10)"></stop>
+            </linearGradient>
+        </defs>
+
+        <line id="cursorBeamCoreLine" class="cursor-beam-coreline" x1="0" y1="0" x2="0" y2="0"></line>
+
+        <circle id="cursorBeamHit" class="cursor-beam-hit" cx="0" cy="0" r="4.5"></circle>
+        <circle id="cursorBeamRing" class="cursor-beam-ring" cx="0" cy="0" r="10"></circle>
+    </svg>
+
+    <div class="data-trails" aria-hidden="true" id="dataTrails">
         <div class="data-trail horizontal anim-out-right" id="trail1"></div>
         <div class="data-trail horizontal anim-in-left" id="trail2"></div>
         <div class="data-trail horizontal anim-out-right" id="trail3"></div>
@@ -280,6 +316,138 @@
     </div>
 
 </div>
+
+<script>
+(function () {
+    const DURATIONS = ["1.11s", "3.33s"];
+    const TRAIL_START_GAP = 333;
+
+    function getCenterMetrics() {
+        const frame = document.getElementById("appFrame");
+
+        if (!frame) {
+            return { cx: 0, cy: 0 };
+        }
+
+        return {
+            cx: frame.clientWidth / 2,
+            cy: frame.clientHeight / 2
+        };
+    }
+
+    function placeTrails() {
+        const { cx, cy } = getCenterMetrics();
+
+        document.querySelectorAll(".data-trail.horizontal").forEach((trail) => {
+            trail.style.setProperty("--trail-start-gap", `${TRAIL_START_GAP}px`);
+        });
+
+        const eastWestOffsets = [-48, -24, 0, 24, 48];
+
+        const horizontalBaseX = cx - 110;
+
+        eastWestOffsets.forEach((offset, i) => {
+            const east = document.getElementById(`trail${i + 1}`);
+
+            if (east) {
+                east.style.left = `${horizontalBaseX}px`;
+                east.style.top = `${cy + offset - 1}px`;
+            }
+        });
+
+        eastWestOffsets.forEach((offset, i) => {
+            const west = document.getElementById(`trail${i + 6}`);
+
+            if (west) {
+                west.style.left = `${horizontalBaseX}px`;
+                west.style.top = `${cy + offset - 1}px`;
+            }
+        });
+    }
+
+    function randomDuration() {
+        return DURATIONS[Math.floor(Math.random() * DURATIONS.length)];
+    }
+
+    function applyRandomDurations() {
+        document.querySelectorAll(".data-trail").forEach((el, index) => {
+            el.style.animationDuration = randomDuration();
+            el.style.animationDelay = `${(index * 0.11).toFixed(2)}s`;
+
+            el.addEventListener("animationiteration", () => {
+                el.style.animationDuration = randomDuration();
+            });
+        });
+    }
+
+    function setupCursorBeam() {
+        const frame = document.getElementById("appFrame");
+        const beamLayer = document.getElementById("cursorBeamLayer");
+        const beamCoreLine = document.getElementById("cursorBeamCoreLine");
+        const beamHit = document.getElementById("cursorBeamHit");
+        const beamRing = document.getElementById("cursorBeamRing");
+
+        if (!frame || !beamLayer || !beamCoreLine || !beamHit || !beamRing) {
+            return;
+        }
+
+        function hideBeam() {
+            beamLayer.classList.remove("beam-active");
+        }
+
+        function showBeam() {
+            beamLayer.classList.add("beam-active");
+        }
+
+        function updateBeam(clientX, clientY) {
+            const frameRect = frame.getBoundingClientRect();
+            const { cx, cy } = getCenterMetrics();
+
+            const x = clientX - frameRect.left;
+            const y = clientY - frameRect.top;
+
+            beamCoreLine.setAttribute("x1", cx);
+            beamCoreLine.setAttribute("y1", cy);
+            beamCoreLine.setAttribute("x2", x);
+            beamCoreLine.setAttribute("y2", y);
+
+            beamHit.setAttribute("cx", x);
+            beamHit.setAttribute("cy", y);
+
+            beamRing.setAttribute("cx", x);
+            beamRing.setAttribute("cy", y);
+
+            showBeam();
+        }
+
+        frame.addEventListener("mousemove", (event) => {
+            updateBeam(event.clientX, event.clientY);
+        });
+
+        frame.addEventListener("mouseenter", (event) => {
+            updateBeam(event.clientX, event.clientY);
+        });
+
+        frame.addEventListener("mouseleave", hideBeam);
+        window.addEventListener("blur", hideBeam);
+    }
+
+    function rebuildAll() {
+        placeTrails();
+    }
+
+    window.addEventListener("resize", rebuildAll);
+    window.addEventListener("load", rebuildAll);
+
+    requestAnimationFrame(rebuildAll);
+
+    setTimeout(rebuildAll, 50);
+    setTimeout(rebuildAll, 200);
+
+    applyRandomDurations();
+    setupCursorBeam();
+})();
+</script>
 
 </body>
 </html>
