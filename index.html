@@ -181,6 +181,7 @@
         animation-timing-function: linear;
         animation-iteration-count: infinite;
         animation-duration: 1.11s;
+        --trail-start-gap: 190px;
     }
 
     .data-trail.horizontal {
@@ -257,28 +258,28 @@
     .anim-in-down { animation-name: inDown; }
 
     @keyframes outRight {
-        0% { opacity: 0; transform: translateX(0) scaleX(0.55); }
+        0% { opacity: 0; transform: translateX(var(--trail-start-gap)) scaleX(0.55); }
         10% { opacity: 0.95; }
         70% { opacity: 0.82; }
         100% { opacity: 0; transform: translateX(42vw) scaleX(1.10); }
     }
 
     @keyframes outLeft {
-        0% { opacity: 0; transform: translateX(0) scaleX(0.55) rotate(180deg); }
+        0% { opacity: 0; transform: translateX(calc(var(--trail-start-gap) * -1)) scaleX(0.55) rotate(180deg); }
         10% { opacity: 0.95; }
         70% { opacity: 0.82; }
         100% { opacity: 0; transform: translateX(-42vw) scaleX(1.10) rotate(180deg); }
     }
 
     @keyframes outUp {
-        0% { opacity: 0; transform: translateY(0) scaleY(0.55) rotate(180deg); }
+        0% { opacity: 0; transform: translateY(calc(var(--trail-start-gap) * -1)) scaleY(0.55) rotate(180deg); }
         10% { opacity: 0.95; }
         70% { opacity: 0.82; }
         100% { opacity: 0; transform: translateY(-34vh) scaleY(1.10) rotate(180deg); }
     }
 
     @keyframes outDown {
-        0% { opacity: 0; transform: translateY(0) scaleY(0.55); }
+        0% { opacity: 0; transform: translateY(var(--trail-start-gap)) scaleY(0.55); }
         10% { opacity: 0.95; }
         70% { opacity: 0.82; }
         100% { opacity: 0; transform: translateY(34vh) scaleY(1.10); }
@@ -288,28 +289,28 @@
         0% { opacity: 0; transform: translateX(-42vw) scaleX(1.10); }
         25% { opacity: 0.82; }
         70% { opacity: 0.95; }
-        100% { opacity: 0; transform: translateX(0) scaleX(0.55); }
+        100% { opacity: 0; transform: translateX(calc(var(--trail-start-gap) * -1)) scaleX(0.55); }
     }
 
     @keyframes inRight {
         0% { opacity: 0; transform: translateX(42vw) scaleX(1.10) rotate(180deg); }
         25% { opacity: 0.82; }
         70% { opacity: 0.95; }
-        100% { opacity: 0; transform: translateX(0) scaleX(0.55) rotate(180deg); }
+        100% { opacity: 0; transform: translateX(var(--trail-start-gap)) scaleX(0.55) rotate(180deg); }
     }
 
     @keyframes inUp {
         0% { opacity: 0; transform: translateY(-34vh) scaleY(1.10); }
         25% { opacity: 0.82; }
         70% { opacity: 0.95; }
-        100% { opacity: 0; transform: translateY(0) scaleY(0.55); }
+        100% { opacity: 0; transform: translateY(calc(var(--trail-start-gap) * -1)) scaleY(0.55); }
     }
 
     @keyframes inDown {
         0% { opacity: 0; transform: translateY(34vh) scaleY(1.10) rotate(180deg); }
         25% { opacity: 0.82; }
         70% { opacity: 0.95; }
-        100% { opacity: 0; transform: translateY(0) scaleY(0.55) rotate(180deg); }
+        100% { opacity: 0; transform: translateY(var(--trail-start-gap)) scaleY(0.55) rotate(180deg); }
     }
 </style>
 </head>
@@ -387,7 +388,6 @@
         <div class="data-trail vertical anim-in-up" id="trail17"></div>
         <div class="data-trail vertical anim-out-down" id="trail18"></div>
         <div class="data-trail vertical anim-in-up" id="trail19"></div>
-        <div class="data-trail vertical anim-out-down" id="trail20"></div>
     </div>
 
 </div>
@@ -395,7 +395,7 @@
 <script>
 (function () {
     const DURATIONS = ["1.11s", "3.33s"];
-    const TRAIL_OFFSET = 170;
+    const TRAIL_START_GAP = 222;
 
     function getCenterMetrics() {
         const frame = document.getElementById("appFrame");
@@ -413,14 +413,21 @@
     function placeTrails() {
         const { cx, cy } = getCenterMetrics();
 
+        document.querySelectorAll(".data-trail").forEach((trail) => {
+            trail.style.setProperty("--trail-start-gap", `${TRAIL_START_GAP}px`);
+        });
+
         const eastWestOffsets = [-48, -24, 0, 24, 48];
         const northSouthOffsets = [-48, -24, 0, 24, 48];
+
+        const horizontalBaseX = cx - 110;
+        const verticalBaseY = cy - 110;
 
         eastWestOffsets.forEach((offset, i) => {
             const east = document.getElementById(`trail${i + 1}`);
 
             if (east) {
-                east.style.left = `${cx - TRAIL_OFFSET}px`;
+                east.style.left = `${horizontalBaseX}px`;
                 east.style.top = `${cy + offset - 1}px`;
             }
         });
@@ -429,7 +436,7 @@
             const west = document.getElementById(`trail${i + 6}`);
 
             if (west) {
-                west.style.left = `${cx - TRAIL_OFFSET}px`;
+                west.style.left = `${horizontalBaseX}px`;
                 west.style.top = `${cy + offset - 1}px`;
             }
         });
@@ -439,7 +446,7 @@
 
             if (north) {
                 north.style.left = `${cx + offset - 1}px`;
-                north.style.top = `${cy - TRAIL_OFFSET}px`;
+                north.style.top = `${verticalBaseY}px`;
             }
         });
 
@@ -448,7 +455,7 @@
 
             if (south) {
                 south.style.left = `${cx + offset - 1}px`;
-                south.style.top = `${cy - TRAIL_OFFSET}px`;
+                south.style.top = `${verticalBaseY}px`;
             }
         });
     }
