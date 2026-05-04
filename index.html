@@ -255,37 +255,15 @@
 
 <div class="app-frame" id="appFrame">
 
-    <img src="assets/img/HomePageBackground.svg" alt="Fondo" class="fondo-svg">
+    <img src="assets/img/HomePageBackground.svg" class="fondo-svg">
 
     <a class="grafana-link" href="pages/grafana/" target="_self">
-        <img src="assets/img/GIDMIGrafana.svg" alt="Grafana">
+        <img src="assets/img/GIDMIGrafana.svg">
     </a>
 
     <a class="powerbi-link" href="http://10.88.90.86/pages/powerbi/" target="_self">
-        <img src="assets/img/GIDMIPowerBI.svg" alt="Power BI">
+        <img src="assets/img/GIDMIPowerBI.svg">
     </a>
-
-    <svg class="cursor-beam-layer" id="cursorBeamLayer">
-        <defs>
-            <filter id="cursorBeamGlow" x="-60%" y="-60%" width="220%" height="220%">
-                <feGaussianBlur stdDeviation="4.5"/>
-            </filter>
-
-            <filter id="cursorBeamGlowStrong" x="-80%" y="-80%" width="260%" height="260%">
-                <feGaussianBlur stdDeviation="7"/>
-            </filter>
-
-            <linearGradient id="cursorBeamGradientCore">
-                <stop offset="0%" stop-color="#fff"/>
-                <stop offset="55%" stop-color="#00f0ff"/>
-                <stop offset="100%" stop-color="transparent"/>
-            </linearGradient>
-        </defs>
-
-        <line id="cursorBeamCoreLine" class="cursor-beam-coreline"/>
-        <circle id="cursorBeamHit" class="cursor-beam-hit" r="4.5"/>
-        <circle id="cursorBeamRing" class="cursor-beam-ring" r="10"/>
-    </svg>
 
     <div class="data-trails">
         <div class="data-trail horizontal anim-out-right" id="trail1"></div>
@@ -302,79 +280,6 @@
     </div>
 
 </div>
-
-<script>
-(function () {
-    const DURATIONS = ["1.11s", "3.33s"];
-
-    function getCenterMetrics() {
-        const frame = document.getElementById("appFrame");
-        return {
-            cx: frame.clientWidth / 2,
-            cy: frame.clientHeight / 2
-        };
-    }
-
-    function placeTrails() {
-        const { cx, cy } = getCenterMetrics();
-        const offsets = [-48, -24, 0, 24, 48];
-        const baseX = cx - 110;
-
-        offsets.forEach((offset, i) => {
-            const el = document.getElementById(`trail${i + 1}`);
-            if (el) {
-                el.style.left = `${baseX}px`;
-                el.style.top = `${cy + offset}px`;
-            }
-        });
-
-        offsets.forEach((offset, i) => {
-            const el = document.getElementById(`trail${i + 6}`);
-            if (el) {
-                el.style.left = `${baseX}px`;
-                el.style.top = `${cy + offset}px`;
-            }
-        });
-    }
-
-    function setupCursorBeam() {
-        const frame = document.getElementById("appFrame");
-        const beam = document.getElementById("cursorBeamCoreLine");
-        const hit = document.getElementById("cursorBeamHit");
-        const ring = document.getElementById("cursorBeamRing");
-        const layer = document.getElementById("cursorBeamLayer");
-
-        function update(e) {
-            const rect = frame.getBoundingClientRect();
-            const { cx, cy } = getCenterMetrics();
-
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-
-            beam.setAttribute("x1", cx);
-            beam.setAttribute("y1", cy);
-            beam.setAttribute("x2", x);
-            beam.setAttribute("y2", y);
-
-            hit.setAttribute("cx", x);
-            hit.setAttribute("cy", y);
-            ring.setAttribute("cx", x);
-            ring.setAttribute("cy", y);
-
-            layer.classList.add("beam-active");
-        }
-
-        frame.addEventListener("mousemove", update);
-        frame.addEventListener("mouseenter", update);
-        frame.addEventListener("mouseleave", () => layer.classList.remove("beam-active"));
-    }
-
-    window.addEventListener("load", placeTrails);
-    window.addEventListener("resize", placeTrails);
-
-    setupCursorBeam();
-})();
-</script>
 
 </body>
 </html>
