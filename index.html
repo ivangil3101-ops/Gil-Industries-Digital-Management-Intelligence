@@ -181,7 +181,7 @@
         animation-timing-function: linear;
         animation-iteration-count: infinite;
         animation-duration: 1.11s;
-        --trail-start-gap: 190px;
+        --trail-start-gap: 333px;
     }
 
     .data-trail.horizontal {
@@ -395,7 +395,8 @@
 <script>
 (function () {
     const DURATIONS = ["1.11s", "3.33s"];
-    const TRAIL_START_GAP = 333;
+    const TRAIL_START_GAP_HORIZONTAL = 333;
+    const TRAIL_START_GAP_VERTICAL = 430;
 
     function getCenterMetrics() {
         const frame = document.getElementById("appFrame");
@@ -413,8 +414,12 @@
     function placeTrails() {
         const { cx, cy } = getCenterMetrics();
 
-        document.querySelectorAll(".data-trail").forEach((trail) => {
-            trail.style.setProperty("--trail-start-gap", `${TRAIL_START_GAP}px`);
+        document.querySelectorAll(".data-trail.horizontal").forEach((trail) => {
+            trail.style.setProperty("--trail-start-gap", `${TRAIL_START_GAP_HORIZONTAL}px`);
+        });
+
+        document.querySelectorAll(".data-trail.vertical").forEach((trail) => {
+            trail.style.setProperty("--trail-start-gap", `${TRAIL_START_GAP_VERTICAL}px`);
         });
 
         const eastWestOffsets = [-48, -24, 0, 24, 48];
