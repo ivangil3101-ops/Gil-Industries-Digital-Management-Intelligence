@@ -253,6 +253,7 @@ body {
 <script>
 (function () {
     const HEXAGON_TRANSPARENT_RADIUS = 0.333;
+    const HEXAGON_TRANSPARENT_RADIUS_270_TO_0 = 0.222;
 
     function getHexagonCenter() {
         const frame = document.getElementById("appFrame");
@@ -261,6 +262,24 @@ body {
             cx: frame.clientWidth * 0.5,
             cy: frame.clientHeight * 0.5
         };
+    }
+
+    function getAngleDegrees(dx, dy) {
+        let angle = Math.atan2(dy, dx) * (180 / Math.PI);
+
+        if (angle < 0) {
+            angle += 360;
+        }
+
+        return angle;
+    }
+
+    function getTransparentRadiusByAngle(angle) {
+        if (angle >= 270 && angle <= 360) {
+            return HEXAGON_TRANSPARENT_RADIUS_270_TO_0;
+        }
+
+        return HEXAGON_TRANSPARENT_RADIUS;
     }
 
     function setupCursorBeam() {
@@ -298,10 +317,13 @@ body {
             const dy = y - cy;
             const length = Math.hypot(dx, dy) || 1;
 
+            const angle = getAngleDegrees(dx, dy);
+            const radiusPercent = getTransparentRadiusByAngle(angle);
+
             const ux = dx / length;
             const uy = dy / length;
 
-            const transparentDistance = Math.min(frame.clientWidth, frame.clientHeight) * HEXAGON_TRANSPARENT_RADIUS;
+            const transparentDistance = Math.min(frame.clientWidth, frame.clientHeight) * radiusPercent;
 
             const startX = cx + (ux * transparentDistance);
             const startY = cy + (uy * transparentDistance);
