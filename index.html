@@ -395,6 +395,7 @@
 <script>
 (function () {
     const DURATIONS = ["1.11s", "3.33s"];
+    const TRAIL_OFFSET = 170;
 
     function getCenterMetrics() {
         const frame = document.getElementById("appFrame");
@@ -415,14 +416,11 @@
         const eastWestOffsets = [-48, -24, 0, 24, 48];
         const northSouthOffsets = [-48, -24, 0, 24, 48];
 
-        const horizontalBaseX = cx - 333;
-        const verticalBaseY = cy - 333;
-
         eastWestOffsets.forEach((offset, i) => {
             const east = document.getElementById(`trail${i + 1}`);
 
             if (east) {
-                east.style.left = `${horizontalBaseX}px`;
+                east.style.left = `${cx - TRAIL_OFFSET}px`;
                 east.style.top = `${cy + offset - 1}px`;
             }
         });
@@ -431,7 +429,7 @@
             const west = document.getElementById(`trail${i + 6}`);
 
             if (west) {
-                west.style.left = `${horizontalBaseX}px`;
+                west.style.left = `${cx - TRAIL_OFFSET}px`;
                 west.style.top = `${cy + offset - 1}px`;
             }
         });
@@ -441,7 +439,7 @@
 
             if (north) {
                 north.style.left = `${cx + offset - 1}px`;
-                north.style.top = `${verticalBaseY}px`;
+                north.style.top = `${cy - TRAIL_OFFSET}px`;
             }
         });
 
@@ -450,7 +448,7 @@
 
             if (south) {
                 south.style.left = `${cx + offset - 1}px`;
-                south.style.top = `${verticalBaseY}px`;
+                south.style.top = `${cy - TRAIL_OFFSET}px`;
             }
         });
     }
