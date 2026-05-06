@@ -1,1 +1,937 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Power BI Solutions</title>
 
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    html,
+    body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #081c2b;
+    }
+
+    body {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .app-frame {
+        position: relative;
+        width: 100vw;
+        aspect-ratio: 1745 / 800;
+        max-height: 100vh;
+        max-width: calc(100vh * 1745 / 800);
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+
+    .fondo-svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+        pointer-events: none;
+        user-select: none;
+        z-index: 0;
+    }
+
+    .VPOIntegral-link {
+        position: absolute;
+        top: 64%;
+        left: 23%;
+        width: 16%;
+        transform: translate(-50%, -50%) scale(1);
+        transform-origin: center center;
+        z-index: 9;
+        display: block;
+        pointer-events: auto;
+        transition: transform 0.22s ease, filter 0.22s ease, opacity 0.22s ease;
+        opacity: 0.96;
+    }
+
+    .VPOIntegral-link:hover {
+        transform: translate(-50%, -50%) scale(1.08);
+        filter:
+            drop-shadow(0 0 10px rgba(0, 240, 255, 0.28))
+            drop-shadow(0 0 22px rgba(0, 240, 255, 0.18));
+        opacity: 1;
+    }
+
+    .VPOIntegral-link img {
+        width: 100%;
+        height: auto;
+        display: block;
+        user-select: none;
+        pointer-events: none;
+    }
+
+    .MaintenanceTower-link {
+        position: absolute;
+        top: 44%;
+        left: 80%;
+        width: 12%;
+        transform: translate(-50%, -50%) scale(1);
+        transform-origin: center center;
+        z-index: 9;
+        display: block;
+        pointer-events: auto;
+        transition: transform 0.22s ease, filter 0.22s ease, opacity 0.22s ease;
+        opacity: 0.96;
+    }
+
+    .MaintenanceTower-link:hover {
+        transform: translate(-50%, -50%) scale(1.08);
+        filter:
+            drop-shadow(0 0 10px rgba(0, 240, 255, 0.28))
+            drop-shadow(0 0 22px rgba(0, 240, 255, 0.18));
+        opacity: 1;
+    }
+
+    .MaintenanceTower-link img {
+        width: 100%;
+        height: auto;
+        display: block;
+        user-select: none;
+        pointer-events: none;
+    }
+
+    .EnvironmentalIncidentsReport-link {
+        position: absolute;
+        top: 76%;
+        left: 68%;
+        width: 10%;
+        transform: translate(-50%, -50%) scale(1);
+        transform-origin: center center;
+        z-index: 9;
+        display: block;
+        pointer-events: auto;
+        transition: transform 0.22s ease, filter 0.22s ease, opacity 0.22s ease;
+        opacity: 0.96;
+    }
+
+    .EnvironmentalIncidentsReport-link:hover {
+        transform: translate(-50%, -50%) scale(1.08);
+        filter:
+            drop-shadow(0 0 10px rgba(0, 240, 255, 0.28))
+            drop-shadow(0 0 22px rgba(0, 240, 255, 0.18));
+        opacity: 1;
+    }
+
+    .EnvironmentalIncidentsReport-link img {
+        width: 100%;
+        height: auto;
+        display: block;
+        user-select: none;
+        pointer-events: none;
+    }
+
+    .cursor-beam-layer {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 6;
+        pointer-events: none;
+        overflow: visible;
+    }
+
+    .cursor-beam-coreline {
+        stroke: url(#cursorBeamGradientCore);
+        stroke-width: 4.2;
+        stroke-linecap: round;
+        filter: url(#cursorBeamGlowStrong);
+        opacity: 0;
+        transition: opacity 0.12s ease;
+    }
+
+    .cursor-beam-side {
+        stroke: url(#cursorBeamGradientSide);
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        filter: url(#cursorBeamGlow);
+        opacity: 0;
+        transition: opacity 0.12s ease;
+    }
+
+    .cursor-beam-core {
+        fill: rgba(255, 255, 255, 0.98);
+        filter: url(#cursorBeamGlowStrong);
+        opacity: 0;
+        transition: opacity 0.12s ease;
+    }
+
+    .cursor-beam-hit {
+        fill: rgba(170, 250, 255, 0.95);
+        filter: url(#cursorBeamGlowStrong);
+        opacity: 0;
+        transition: opacity 0.12s ease;
+    }
+
+    .cursor-beam-ring {
+        fill: none;
+        stroke: rgba(0, 240, 255, 0.65);
+        stroke-width: 1.4;
+        filter: url(#cursorBeamGlow);
+        opacity: 0;
+        transition: opacity 0.12s ease;
+    }
+
+    .beam-active .cursor-beam-coreline,
+    .beam-active .cursor-beam-side,
+    .beam-active .cursor-beam-core,
+    .beam-active .cursor-beam-hit,
+    .beam-active .cursor-beam-ring {
+        opacity: 1;
+    }
+
+    .cursor-beam-coreline {
+        animation: beamPulseCore 1.1s ease-in-out infinite;
+    }
+
+    .cursor-beam-side.left {
+        animation: beamPulseSide 1.4s ease-in-out infinite;
+    }
+
+    .cursor-beam-side.right {
+        animation: beamPulseSide 1.4s ease-in-out infinite reverse;
+    }
+
+    .cursor-beam-core,
+    .cursor-beam-hit,
+    .cursor-beam-ring {
+        animation: beamBlink 1.2s ease-in-out infinite;
+    }
+
+    .data-trails {
+        position: absolute;
+        inset: 0;
+        z-index: 7;
+        pointer-events: none;
+        overflow: hidden;
+    }
+
+    .data-trail {
+        position: absolute;
+        border-radius: 999px;
+        opacity: 0;
+        will-change: transform, opacity;
+        transform-origin: center center;
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+        animation-duration: 1.11s;
+    }
+
+    .data-trail.horizontal {
+        width: 220px;
+        height: 2px;
+        background: linear-gradient(
+            90deg,
+            rgba(0, 240, 255, 0) 0%,
+            rgba(0, 240, 255, 0.20) 18%,
+            rgba(120, 250, 255, 0.98) 55%,
+            rgba(255, 255, 255, 0.98) 72%,
+            rgba(0, 240, 255, 0) 100%
+        );
+        box-shadow:
+            0 0 6px rgba(0, 240, 255, 0.45),
+            0 0 14px rgba(0, 240, 255, 0.28),
+            0 0 22px rgba(255, 255, 255, 0.10);
+    }
+
+    .data-trail.vertical {
+        width: 2px;
+        height: 220px;
+        background: linear-gradient(
+            180deg,
+            rgba(0, 240, 255, 0) 0%,
+            rgba(0, 240, 255, 0.20) 18%,
+            rgba(120, 250, 255, 0.98) 55%,
+            rgba(255, 255, 255, 0.98) 72%,
+            rgba(0, 240, 255, 0) 100%
+        );
+        box-shadow:
+            0 0 6px rgba(0, 240, 255, 0.45),
+            0 0 14px rgba(0, 240, 255, 0.28),
+            0 0 22px rgba(255, 255, 255, 0.10);
+    }
+
+    .data-trail.horizontal::after {
+        content: "";
+        position: absolute;
+        right: 18px;
+        top: 50%;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.95);
+        box-shadow:
+            0 0 8px rgba(255, 255, 255, 0.95),
+            0 0 16px rgba(0, 240, 255, 0.65);
+    }
+
+    .data-trail.vertical::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: 18px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        transform: translateX(-50%);
+        background: rgba(255, 255, 255, 0.95);
+        box-shadow:
+            0 0 8px rgba(255, 255, 255, 0.95),
+            0 0 16px rgba(0, 240, 255, 0.65);
+    }
+
+    .anim-out-right { animation-name: outRight; }
+    .anim-out-left { animation-name: outLeft; }
+    .anim-out-up { animation-name: outUp; }
+    .anim-out-down { animation-name: outDown; }
+    .anim-in-left { animation-name: inLeft; }
+    .anim-in-right { animation-name: inRight; }
+    .anim-in-up { animation-name: inUp; }
+    .anim-in-down { animation-name: inDown; }
+
+    @keyframes outRight {
+        0% { opacity: 0; transform: translateX(0) scaleX(0.55); }
+        10% { opacity: 0.95; }
+        70% { opacity: 0.82; }
+        100% { opacity: 0; transform: translateX(42vw) scaleX(1.10); }
+    }
+
+    @keyframes outLeft {
+        0% { opacity: 0; transform: translateX(0) scaleX(0.55) rotate(180deg); }
+        10% { opacity: 0.95; }
+        70% { opacity: 0.82; }
+        100% { opacity: 0; transform: translateX(-42vw) scaleX(1.10) rotate(180deg); }
+    }
+
+    @keyframes outUp {
+        0% { opacity: 0; transform: translateY(0) scaleY(0.55) rotate(180deg); }
+        10% { opacity: 0.95; }
+        70% { opacity: 0.82; }
+        100% { opacity: 0; transform: translateY(-34vh) scaleY(1.10) rotate(180deg); }
+    }
+
+    @keyframes outDown {
+        0% { opacity: 0; transform: translateY(0) scaleY(0.55); }
+        10% { opacity: 0.95; }
+        70% { opacity: 0.82; }
+        100% { opacity: 0; transform: translateY(34vh) scaleY(1.10); }
+    }
+
+    @keyframes inLeft {
+        0% { opacity: 0; transform: translateX(-42vw) scaleX(1.10); }
+        25% { opacity: 0.82; }
+        70% { opacity: 0.95; }
+        100% { opacity: 0; transform: translateX(0) scaleX(0.55); }
+    }
+
+    @keyframes inRight {
+        0% { opacity: 0; transform: translateX(42vw) scaleX(1.10) rotate(180deg); }
+        25% { opacity: 0.82; }
+        70% { opacity: 0.95; }
+        100% { opacity: 0; transform: translateX(0) scaleX(0.55) rotate(180deg); }
+    }
+
+    @keyframes inUp {
+        0% { opacity: 0; transform: translateY(-34vh) scaleY(1.10); }
+        25% { opacity: 0.82; }
+        70% { opacity: 0.95; }
+        100% { opacity: 0; transform: translateY(0) scaleY(0.55); }
+    }
+
+    @keyframes inDown {
+        0% { opacity: 0; transform: translateY(34vh) scaleY(1.10) rotate(180deg); }
+        25% { opacity: 0.82; }
+        70% { opacity: 0.95; }
+        100% { opacity: 0; transform: translateY(0) scaleY(0.55) rotate(180deg); }
+    }
+
+    @keyframes beamPulseCore {
+        0%, 100% { stroke-width: 4.2; opacity: 0.82; }
+        50% { stroke-width: 5.6; opacity: 1; }
+    }
+
+    @keyframes beamPulseSide {
+        0%, 100% { stroke-width: 1.8; opacity: 0.42; }
+        50% { stroke-width: 2.4; opacity: 0.82; }
+    }
+
+    @keyframes beamBlink {
+        0%, 100% { opacity: 0.72; }
+        50% { opacity: 1; }
+    }
+
+    .scene {
+        position: absolute;
+        inset: 0;
+        z-index: 8;
+        pointer-events: none;
+    }
+
+    .core-anchor {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%) translateY(27%);
+        width: 24%;
+        aspect-ratio: 1 / 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        pointer-events: none;
+    }
+
+    #coreSvg {
+        width: 100%;
+        height: 100%;
+        display: block;
+        filter: drop-shadow(0 0 12px rgba(0, 240, 255, 0.08));
+        transform: rotate(45deg);
+        transform-origin: center center;
+        pointer-events: none;
+    }
+
+    .outer-halo {
+        animation: haloPulse 3.2s ease-in-out infinite;
+    }
+
+    .ring-slow {
+        transform-origin: 300px 300px;
+        animation: rotateSlow 18s linear infinite;
+    }
+
+    .ring-mid {
+        transform-origin: 300px 300px;
+        animation: rotateMid 10s linear infinite reverse;
+    }
+
+    .ring-fast {
+        transform-origin: 300px 300px;
+        animation: rotateFast 5.4s linear infinite;
+    }
+
+    .core-pulse {
+        animation: corePulse 2.4s ease-in-out infinite;
+    }
+
+    .line-pulse {
+        animation: linePulse 1.8s ease-in-out infinite;
+    }
+
+    .blink-a {
+        animation: blinkA 1.7s ease-in-out infinite;
+    }
+
+    .blink-b {
+        animation: blinkB 2.3s ease-in-out infinite;
+    }
+
+    @keyframes rotateSlow {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    @keyframes rotateMid {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(-360deg); }
+    }
+
+    @keyframes rotateFast {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    @keyframes haloPulse {
+        0%, 100% { opacity: 0.24; }
+        50% { opacity: 0.72; }
+    }
+
+    @keyframes corePulse {
+        0%, 100% { opacity: 0.82; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.03); }
+    }
+
+    @keyframes linePulse {
+        0%, 100% { opacity: 0.38; }
+        50% { opacity: 1; }
+    }
+
+    @keyframes blinkA {
+        0%, 100% { opacity: 0.35; }
+        50% { opacity: 1; }
+    }
+
+    @keyframes blinkB {
+        0%, 100% { opacity: 0.25; }
+        35% { opacity: 0.9; }
+        70% { opacity: 0.4; }
+    }
+
+    .canvas {
+        position: absolute;
+        inset: 0;
+        z-index: 20;
+        pointer-events: none;
+    }
+
+    .zona {
+        position: absolute;
+        display: block;
+        background: rgba(0, 240, 255, 0.045);
+        border: 1px solid rgba(0, 240, 255, 0.18);
+        box-shadow:
+            0 0 10px rgba(0, 240, 255, 0.08),
+            inset 0 0 10px rgba(0, 240, 255, 0.05);
+        transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+        pointer-events: auto;
+        z-index: 21;
+    }
+
+    .zona:hover {
+        transform: scale(1.03);
+        background: rgba(0, 240, 255, 0.10);
+        box-shadow:
+            0 0 10px rgba(0, 240, 255, 0.18),
+            0 0 22px rgba(0, 240, 255, 0.10),
+            inset 0 0 12px rgba(0, 240, 255, 0.10);
+    }
+
+    .circulo {
+        border-radius: 50%;
+    }
+
+    .c1 {
+        top: 4%;
+        left: 3.40%;
+        width: 8%;
+        aspect-ratio: 1;
+    }
+
+    .c2 {
+        top: 4.33%;
+        left: 88.4%;
+        width: 8%;
+        aspect-ratio: 1;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="app-frame" id="appFrame">
+    <img
+        src="../../assets/img/PowerBIBackground.svg"
+        alt="Fondo Power BI"
+        class="fondo-svg"
+    >
+
+    <a
+        class="VPOIntegral-link"
+        href="https://app.powerbi.com/reportEmbed?reportId=cbe6f834-4161-4178-ab31-c2150750d85a&autoAuth=true&ctid=cef04b19-7776-4a94-b89b-375c77a8f936&actionBarEnabled=true"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Ir a VPO Integral"
+    >
+        <img src="../../assets/img/PBIVPOIntegral.svg" alt="VPO Integral">
+    </a>
+
+    <a
+        class="MaintenanceTower-link"
+        href="https://app.powerbi.com/reportEmbed?reportId=1c314dff-1b41-478c-a2c0-2b252f01c98b&autoAuth=true&ctid=cef04b19-7776-4a94-b89b-375c77a8f936&actionBarEnabled=true"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Ir a MaintenanceTower"
+    >
+        <img src="../../assets/img/PBIMaintenanceTower.svg?v=5" alt="MaintenanceTower">
+    </a>
+
+    <a
+        class="EnvironmentalIncidentsReport-link"
+        href="https://app.powerbi.com/reportEmbed?reportId=236f7c01-8c54-416a-83dd-312a41f396f1&autoAuth=true&ctid=cef04b19-7776-4a94-b89b-375c77a8f936&actionBarEnabled=true"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Ir a Environmental Incidents Report"
+    >
+        <img src="../../assets/img/PBIEnvironmentalIncidentsReport.svg" alt="Environmental Incidents Report">
+    </a>
+
+    <svg class="cursor-beam-layer" id="cursorBeamLayer" aria-hidden="true">
+        <defs>
+            <filter id="cursorBeamGlow" x="-60%" y="-60%" width="220%" height="220%">
+                <feGaussianBlur stdDeviation="4.5" result="blur"></feGaussianBlur>
+                <feMerge>
+                    <feMergeNode in="blur"></feMergeNode>
+                    <feMergeNode in="SourceGraphic"></feMergeNode>
+                </feMerge>
+            </filter>
+
+            <filter id="cursorBeamGlowStrong" x="-80%" y="-80%" width="260%" height="260%">
+                <feGaussianBlur stdDeviation="7" result="blur"></feGaussianBlur>
+                <feMerge>
+                    <feMergeNode in="blur"></feMergeNode>
+                    <feMergeNode in="SourceGraphic"></feMergeNode>
+                </feMerge>
+            </filter>
+
+            <linearGradient id="cursorBeamGradientCore" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="rgba(255,255,255,0.98)"></stop>
+                <stop offset="18%" stop-color="rgba(195,255,255,0.98)"></stop>
+                <stop offset="55%" stop-color="rgba(0,240,255,0.95)"></stop>
+                <stop offset="100%" stop-color="rgba(0,240,255,0.10)"></stop>
+            </linearGradient>
+
+            <linearGradient id="cursorBeamGradientSide" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="rgba(255,255,255,0.60)"></stop>
+                <stop offset="25%" stop-color="rgba(130,250,255,0.78)"></stop>
+                <stop offset="70%" stop-color="rgba(0,240,255,0.65)"></stop>
+                <stop offset="100%" stop-color="rgba(0,240,255,0.02)"></stop>
+            </linearGradient>
+        </defs>
+
+        <line id="cursorBeamLeft" class="cursor-beam-side left" x1="0" y1="0" x2="0" y2="0"></line>
+        <line id="cursorBeamCoreLine" class="cursor-beam-coreline" x1="0" y1="0" x2="0" y2="0"></line>
+        <line id="cursorBeamRight" class="cursor-beam-side right" x1="0" y1="0" x2="0" y2="0"></line>
+
+        <circle id="cursorBeamCore" class="cursor-beam-core" cx="0" cy="0" r="6"></circle>
+        <circle id="cursorBeamHit" class="cursor-beam-hit" cx="0" cy="0" r="4.5"></circle>
+        <circle id="cursorBeamRing" class="cursor-beam-ring" cx="0" cy="0" r="10"></circle>
+    </svg>
+
+    <div class="data-trails" aria-hidden="true" id="dataTrails">
+        <div class="data-trail horizontal anim-out-right" id="trail1"></div>
+        <div class="data-trail horizontal anim-in-left" id="trail2"></div>
+        <div class="data-trail horizontal anim-out-right" id="trail3"></div>
+        <div class="data-trail horizontal anim-in-left" id="trail4"></div>
+        <div class="data-trail horizontal anim-out-right" id="trail5"></div>
+
+        <div class="data-trail horizontal anim-out-left" id="trail6"></div>
+        <div class="data-trail horizontal anim-in-right" id="trail7"></div>
+        <div class="data-trail horizontal anim-out-left" id="trail8"></div>
+        <div class="data-trail horizontal anim-in-right" id="trail9"></div>
+        <div class="data-trail horizontal anim-out-left" id="trail10"></div>
+
+        <div class="data-trail vertical anim-out-up" id="trail11"></div>
+        <div class="data-trail vertical anim-in-down" id="trail12"></div>
+        <div class="data-trail vertical anim-out-up" id="trail13"></div>
+        <div class="data-trail vertical anim-in-down" id="trail14"></div>
+        <div class="data-trail vertical anim-out-up" id="trail15"></div>
+
+        <div class="data-trail vertical anim-out-down" id="trail16"></div>
+        <div class="data-trail vertical anim-in-up" id="trail17"></div>
+        <div class="data-trail vertical anim-out-down" id="trail18"></div>
+        <div class="data-trail vertical anim-in-up" id="trail19"></div>
+        <div class="data-trail vertical anim-out-down" id="trail20"></div>
+    </div>
+
+    <div class="scene">
+        <div class="core-anchor" id="coreAnchor">
+            <svg id="coreSvg" viewBox="0 0 600 600" aria-label="Arc reactor tecnológico">
+                <defs>
+                    <radialGradient id="outerCyanGlow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="rgba(0,240,255,0.42)"></stop>
+                        <stop offset="55%" stop-color="rgba(0,240,255,0.12)"></stop>
+                        <stop offset="100%" stop-color="rgba(0,240,255,0)"></stop>
+                    </radialGradient>
+
+                    <radialGradient id="coreWhiteGlow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#ffffff"></stop>
+                        <stop offset="24%" stop-color="#dffcff"></stop>
+                        <stop offset="52%" stop-color="#79f3ff"></stop>
+                        <stop offset="100%" stop-color="rgba(0,240,255,0)"></stop>
+                    </radialGradient>
+
+                    <radialGradient id="coreBlueHot" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#ffffff"></stop>
+                        <stop offset="35%" stop-color="#aaf9ff"></stop>
+                        <stop offset="70%" stop-color="#29ebff"></stop>
+                        <stop offset="100%" stop-color="#0a5163"></stop>
+                    </radialGradient>
+
+                    <linearGradient id="metal" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#5f8092"></stop>
+                        <stop offset="18%" stop-color="#263d4b"></stop>
+                        <stop offset="50%" stop-color="#7ea0b3"></stop>
+                        <stop offset="75%" stop-color="#193040"></stop>
+                        <stop offset="100%" stop-color="#516e80"></stop>
+                    </linearGradient>
+
+                    <linearGradient id="darkMetal" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#071923"></stop>
+                        <stop offset="50%" stop-color="#17394b"></stop>
+                        <stop offset="100%" stop-color="#040e16"></stop>
+                    </linearGradient>
+
+                    <filter id="softGlow" x="-60%" y="-60%" width="220%" height="220%">
+                        <feGaussianBlur stdDeviation="6" result="blur"></feGaussianBlur>
+                        <feMerge>
+                            <feMergeNode in="blur"></feMergeNode>
+                            <feMergeNode in="SourceGraphic"></feMergeNode>
+                        </feMerge>
+                    </filter>
+
+                    <filter id="strongGlow" x="-80%" y="-80%" width="260%" height="260%">
+                        <feGaussianBlur stdDeviation="12" result="blur"></feGaussianBlur>
+                        <feMerge>
+                            <feMergeNode in="blur"></feMergeNode>
+                            <feMergeNode in="SourceGraphic"></feMergeNode>
+                        </feMerge>
+                    </filter>
+
+                    <filter id="hardGlow" x="-100%" y="-100%" width="300%" height="300%">
+                        <feGaussianBlur stdDeviation="18" result="blur"></feGaussianBlur>
+                        <feMerge>
+                            <feMergeNode in="blur"></feMergeNode>
+                            <feMergeNode in="SourceGraphic"></feMergeNode>
+                        </feMerge>
+                    </filter>
+                </defs>
+
+                <circle class="outer-halo" cx="300" cy="300" r="210" fill="url(#outerCyanGlow)" opacity="0.42"></circle>
+                <circle cx="300" cy="300" r="182" fill="none" stroke="url(#darkMetal)" stroke-width="26"></circle>
+                <circle cx="300" cy="300" r="182" fill="none" stroke="#7ab7d1" stroke-width="2" opacity="0.34"></circle>
+
+                <g class="ring-slow">
+                    <circle cx="300" cy="300" r="166" fill="none" stroke="#00f0ff" stroke-width="10" stroke-dasharray="54 15 16 18" opacity="0.88" filter="url(#softGlow)"></circle>
+                    <circle cx="300" cy="300" r="166" fill="none" stroke="#dcffff" stroke-width="1.8" stroke-dasharray="54 15 16 18" opacity="0.72"></circle>
+                </g>
+
+                <g class="ring-mid">
+                    <circle cx="300" cy="300" r="144" fill="none" stroke="#63efff" stroke-width="5" stroke-dasharray="20 12" opacity="0.86"></circle>
+                    <circle cx="300" cy="300" r="132" fill="none" stroke="#0fa6c3" stroke-width="2.5" stroke-dasharray="8 11" opacity="0.62"></circle>
+                </g>
+
+                <g class="line-pulse" stroke="#00efff" stroke-width="3.2" stroke-linecap="round" filter="url(#softGlow)">
+                    <line x1="300" y1="154" x2="300" y2="196"></line>
+                    <line x1="446" y1="300" x2="404" y2="300"></line>
+                    <line x1="300" y1="446" x2="300" y2="404"></line>
+                    <line x1="154" y1="300" x2="196" y2="300"></line>
+                    <line x1="403" y1="197" x2="377" y2="223"></line>
+                    <line x1="403" y1="403" x2="377" y2="377"></line>
+                    <line x1="197" y1="403" x2="223" y2="377"></line>
+                    <line x1="197" y1="197" x2="223" y2="223"></line>
+                </g>
+
+                <g>
+                    <circle class="blink-a" cx="300" cy="148" r="5.5" fill="#00f0ff" filter="url(#softGlow)"></circle>
+                    <circle class="blink-b" cx="452" cy="300" r="5.5" fill="#00f0ff" filter="url(#softGlow)"></circle>
+                    <circle class="blink-a" cx="300" cy="452" r="5.5" fill="#00f0ff" filter="url(#softGlow)"></circle>
+                    <circle class="blink-b" cx="148" cy="300" r="5.5" fill="#00f0ff" filter="url(#softGlow)"></circle>
+                    <circle class="blink-b" cx="407" cy="193" r="4" fill="#adfbff"></circle>
+                    <circle class="blink-a" cx="407" cy="407" r="4" fill="#adfbff"></circle>
+                    <circle class="blink-b" cx="193" cy="407" r="4" fill="#adfbff"></circle>
+                    <circle class="blink-a" cx="193" cy="193" r="4" fill="#adfbff"></circle>
+                </g>
+
+                <circle cx="300" cy="300" r="118" fill="url(#darkMetal)" stroke="#7eb8d1" stroke-width="3"></circle>
+                <circle cx="300" cy="300" r="106" fill="none" stroke="#234b61" stroke-width="10"></circle>
+                <circle cx="300" cy="300" r="97" fill="none" stroke="#8deaff" stroke-width="1.5" opacity="0.25"></circle>
+
+                <g fill="url(#metal)" stroke="#a8d8ea" stroke-width="1.1">
+                    <path d="M289 162 L311 162 L319 204 L281 204 Z"></path>
+                    <path d="M438 289 L438 311 L396 319 L396 281 Z"></path>
+                    <path d="M289 438 L311 438 L319 396 L281 396 Z"></path>
+                    <path d="M162 289 L204 281 L204 319 L162 311 Z"></path>
+                </g>
+
+                <g class="ring-fast">
+                    <circle cx="300" cy="300" r="86" fill="none" stroke="#c5feff" stroke-width="3" stroke-dasharray="12 8" opacity="0.9"></circle>
+                    <circle cx="300" cy="300" r="78" fill="none" stroke="#00ebff" stroke-width="6" stroke-dasharray="26 10" opacity="0.86" filter="url(#softGlow)"></circle>
+                    <circle cx="300" cy="300" r="68" fill="none" stroke="#1693aa" stroke-width="2" stroke-dasharray="8 8" opacity="0.68"></circle>
+                </g>
+
+                <circle class="core-pulse" cx="300" cy="300" r="66" fill="url(#coreWhiteGlow)" opacity="0.95" filter="url(#hardGlow)"></circle>
+                <circle cx="300" cy="300" r="58" fill="url(#coreBlueHot)" stroke="#e9ffff" stroke-width="2.2" filter="url(#strongGlow)"></circle>
+                <circle cx="300" cy="300" r="48" fill="none" stroke="#f2ffff" stroke-width="2" opacity="0.72"></circle>
+                <circle cx="300" cy="300" r="38" fill="none" stroke="#00eaff" stroke-width="5" opacity="0.78" filter="url(#softGlow)"></circle>
+                <circle cx="300" cy="300" r="24" fill="#ffffff" opacity="0.98"></circle>
+                <circle cx="300" cy="300" r="14" fill="#d8fdff" opacity="1"></circle>
+            </svg>
+        </div>
+    </div>
+
+    <div class="canvas">
+        <a href="http://10.88.90.86" class="zona circulo c1" aria-label="Zona c1"></a>
+        <a href="http://10.88.90.86" class="zona circulo c2" aria-label="Zona c2"></a>
+    </div>
+</div>
+
+<script>
+(function () {
+    const DURATIONS = ["1.11s", "3.33s"];
+
+    function getCoreMetrics() {
+        const coreSvg = document.getElementById("coreSvg");
+        const frame = document.getElementById("appFrame");
+
+        if (!coreSvg || !frame) {
+            return { cx: 0, cy: 0 };
+        }
+
+        const coreRect = coreSvg.getBoundingClientRect();
+        const frameRect = frame.getBoundingClientRect();
+
+        return {
+            cx: coreRect.left - frameRect.left + (coreRect.width / 2),
+            cy: coreRect.top - frameRect.top + (coreRect.height / 2)
+        };
+    }
+
+    function placeTrails() {
+        const { cx, cy } = getCoreMetrics();
+        const eastWestOffsets = [-48, -24, 0, 24, 48];
+        const northSouthOffsets = [-48, -24, 0, 24, 48];
+        const horizontalBaseX = cx - 110;
+        const verticalBaseY = cy - 110;
+
+        eastWestOffsets.forEach((offset, i) => {
+            const east = document.getElementById(`trail${i + 1}`);
+            if (east) {
+                east.style.left = `${horizontalBaseX}px`;
+                east.style.top = `${cy + offset - 1}px`;
+            }
+        });
+
+        eastWestOffsets.forEach((offset, i) => {
+            const west = document.getElementById(`trail${i + 6}`);
+            if (west) {
+                west.style.left = `${horizontalBaseX}px`;
+                west.style.top = `${cy + offset - 1}px`;
+            }
+        });
+
+        northSouthOffsets.forEach((offset, i) => {
+            const north = document.getElementById(`trail${i + 11}`);
+            if (north) {
+                north.style.left = `${cx + offset - 1}px`;
+                north.style.top = `${verticalBaseY}px`;
+            }
+        });
+
+        northSouthOffsets.forEach((offset, i) => {
+            const south = document.getElementById(`trail${i + 16}`);
+            if (south) {
+                south.style.left = `${cx + offset - 1}px`;
+                south.style.top = `${verticalBaseY}px`;
+            }
+        });
+    }
+
+    function randomDuration() {
+        return DURATIONS[Math.floor(Math.random() * DURATIONS.length)];
+    }
+
+    function applyRandomDurations() {
+        document.querySelectorAll(".data-trail").forEach((el, index) => {
+            el.style.animationDuration = randomDuration();
+            el.style.animationDelay = `${(index * 0.11).toFixed(2)}s`;
+            el.addEventListener("animationiteration", () => {
+                el.style.animationDuration = randomDuration();
+            });
+        });
+    }
+
+    function setupCursorBeam() {
+        const frame = document.getElementById("appFrame");
+        const beamLayer = document.getElementById("cursorBeamLayer");
+        const beamLeft = document.getElementById("cursorBeamLeft");
+        const beamCoreLine = document.getElementById("cursorBeamCoreLine");
+        const beamRight = document.getElementById("cursorBeamRight");
+        const beamCore = document.getElementById("cursorBeamCore");
+        const beamHit = document.getElementById("cursorBeamHit");
+        const beamRing = document.getElementById("cursorBeamRing");
+
+        if (!frame || !beamLayer || !beamLeft || !beamCoreLine || !beamRight || !beamCore || !beamHit || !beamRing) {
+            return;
+        }
+
+        function hideBeam() {
+            beamLayer.classList.remove("beam-active");
+        }
+
+        function showBeam() {
+            beamLayer.classList.add("beam-active");
+        }
+
+        function setLine(el, x1, y1, x2, y2) {
+            el.setAttribute("x1", x1);
+            el.setAttribute("y1", y1);
+            el.setAttribute("x2", x2);
+            el.setAttribute("y2", y2);
+        }
+
+        function updateBeam(clientX, clientY) {
+            const frameRect = frame.getBoundingClientRect();
+            const { cx, cy } = getCoreMetrics();
+
+            const x = clientX - frameRect.left;
+            const y = clientY - frameRect.top;
+            const dx = x - cx;
+            const dy = y - cy;
+            const length = Math.hypot(dx, dy) || 1;
+            const nx = -dy / length;
+            const ny = dx / length;
+            const offset = 4.5;
+
+            setLine(beamLeft, cx + (nx * offset), cy + (ny * offset), x + (nx * offset), y + (ny * offset));
+            setLine(beamCoreLine, cx, cy, x, y);
+            setLine(beamRight, cx - (nx * offset), cy - (ny * offset), x - (nx * offset), y - (ny * offset));
+
+            beamCore.setAttribute("cx", cx);
+            beamCore.setAttribute("cy", cy);
+            beamHit.setAttribute("cx", x);
+            beamHit.setAttribute("cy", y);
+            beamRing.setAttribute("cx", x);
+            beamRing.setAttribute("cy", y);
+
+            showBeam();
+        }
+
+        frame.addEventListener("mousemove", (event) => {
+            updateBeam(event.clientX, event.clientY);
+        });
+
+        frame.addEventListener("mouseenter", (event) => {
+            updateBeam(event.clientX, event.clientY);
+        });
+
+        frame.addEventListener("mouseleave", hideBeam);
+        window.addEventListener("blur", hideBeam);
+    }
+
+    function rebuildAll() {
+        placeTrails();
+    }
+
+    window.addEventListener("resize", rebuildAll);
+    window.addEventListener("load", rebuildAll);
+
+    requestAnimationFrame(rebuildAll);
+    setTimeout(rebuildAll, 50);
+    setTimeout(rebuildAll, 200);
+
+    applyRandomDurations();
+    setupCursorBeam();
+})();
+</script>
+
+</body>
+</html>
